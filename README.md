@@ -5,4 +5,4 @@ Usage is simple. just create a Div in your page where you want to have your json
 
 <code>$('#my-json-editor').jsonbox(data,{target:'#mytextarea'});</code>
 
-this code will generate the edited json in an html element (like a <p> or <textarea>) so you can send it back to your server application or do whatever you want with this. This repository is under active development so use the code with your own risk.
+this code will generate the edited json in an html element (like a < p > or < textarea >) so you can send it back to your server application or do whatever you want with this. This repository is under active development so use the code with your own risk.
