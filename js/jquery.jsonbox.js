@@ -66,11 +66,11 @@ $(function() {
 			'display':'inline-block',
 			'width':'auto',
 			'text-align':'center',
-			'padding':'5px',
+			'padding':'4px',
 			'border-bottom-right-radius':'4px',
 			'border-bottom-left-radius':'4px',
 			'background':'#eee',
-			'font-size':'11px'
+			'font-size':'13px'
 		};
 		// positioning buttons below the select box (a little ugly but you won't need to change it!)
 		this.append(document.createElement('div'));
