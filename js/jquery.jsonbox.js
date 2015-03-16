@@ -1,32 +1,20 @@
-// jsonBOX jQuery Plugin - Developed by Pooria Attarzadeh  ||  http://pooria.co
-// I developed this plugin for a specific project but now I'm adding more 
-// features so it can be useful for other devs too. 
-// Sorry for the mess with style codes. I'm planning to move the view codes to 
-// a css file soon.
-
 $(function() {
 	$.fn.jsonbox = function(data , options) {
-		var obj,settings;
-		// plugin settings
+		var obj,settings,box;
+		// settings
 		settings = this.extend(
 		  {
 		  	  filter: null,
 		  	  target: null,
-		  	  sort:true,
-		  	  popupTheme: {
-		  	  	'position':'absolute',
-		  	  	'width':'40%',
-		  	  	'top':'25%',
-		  	  	'left':'30%',
-		  	  	'height':'150px',
-		  	  	'background':'#fff',
-		  	  	'border':'2px solid',
-		  	  	'border-radius':'5px'
-		  	  }
+		  	  sort:true
 		  },options);
 
 		var _elm = [];
 		var filterArray,fieldName;
+
+		//add class to holder
+		this.addClass('jsonbox-holder');
+
 		// crawling throw the object to get the filtered object
 		obj = data;
 		if (settings.filter !== null) {
@@ -42,53 +30,42 @@ $(function() {
 		if(settings.sort)
 			obj.sort(compare);
 
-		// put filtered object into an array
-		$.each(obj , function(key,val) {
-			_elm.push(val[fieldName]);
-			console.log('key:%s  val:%s',key,val[fieldName]);
-		});
-		
-
-		var box;
-		// put catched elements into a selectbox to edit
+		// create the select box
 		box = this.html(document.createElement('select')).find('select').addClass('jsonbox');
-		$.each(_elm ,function(key,val) {
-			if (typeof(val) !== 'string')
-				val = key; 
-			box.append(document.createElement('option')).find('option:last-child').val(key).html(val);
-		});
 
-		//add some nesessory style
-		this.css('width',this.find('.jsonbox').width());
+		// Iterate through object to fill listbox
+		$.each(obj ,function(key,val) {
+			if (typeof(val[fieldName]) === 'object')
+				val = key; 
+			box.append(document.createElement('option')).find('option:last-child').val(key).html(val[fieldName]);
+		});
 
 		// create add and edit buttons
-		var btnStyle = {
-			'display':'inline-block',
-			'width':'auto',
-			'text-align':'center',
-			'padding':'4px',
-			'border-bottom-right-radius':'4px',
-			'border-bottom-left-radius':'4px',
-			'background':'#eee',
-			'font-size':'13px'
-		};
-		// positioning buttons below the select box (a little ugly but you won't need to change it!)
-		this.append(document.createElement('div'));
-		this.find('div').css({'display':'block','text-align':'right'}).addClass('jsonbox-buttons');
-		this.find('.jsonbox-buttons').append(document.createElement('a'));
-		this.find('.jsonbox-buttons').find('a:last-child').css(btnStyle).prop('href','#').html('Add').on('click',function(e) {
-			e.preventDefault();
+		this.append(document.createElement('div')).find('div').addClass('jsonbox-buttons-holder');
+
+		this.find('.jsonbox-buttons-holder').append(document.createElement('a'));
+		this.find('.jsonbox-buttons-holder').find('a:last-child').addClass('jsonbox-button').html('Add')
+		.on('click',function(e) {
 			// hook for add click
-		 	var popup = $(this).parent().append(document.createElement('div')).find('div:last-child').css(settings.popupTheme);
+			e.preventDefault();
+
+		 	var popup = $(this).parent().append(document.createElement('div'))
+		 		.find('div:last-child').addClass('jsonbox-popup');
 		 	// create add form 
-		 	popup.append(document.createElement('input')).find('input').prop('placeholder','New Item').css({'width':'80%','margin':'10% 10% 0 10%','text-align':'center'});
-		 	popup.append(document.createElement('button')).find('button:last-child').text('Add').css({'display':'block','margin':'5px auto'}).on('click',function(e) {
+		 	popup.append(document.createElement('input')).find('input')
+		 		.prop('placeholder','New Item').css({'width':'80%','margin':'10% 10% 0 10%','text-align':'center'});
+		 	popup.append(document.createElement('button')).find('button:last-child')
+		 	.text('Save new item').css({'display':'block','margin':'5px auto'})
+		 	.on('click',function(e) {
+		 		// hook for Save new Item button ( when saving a new item in popup)
 		 		e.preventDefault();
 		 		var item = popup.find('input').val();
 		 		obj[obj.length] = new Object;
 		 		obj[obj.length-1][fieldName] = item;
 		 		obj.sort(compare);
+		 		// update the targeted element with edited json
 		 		updateListBox($(this).parent().parent().parent(),obj,fieldName);
+		 		// Destroy the popup element
 		 		popup.fadeOut(250,function(){ popup.remove();});
 		 		
 		 	});
@@ -100,20 +77,16 @@ $(function() {
 		 	
 
 		 });
-		this.find('.jsonbox-buttons').append(document.createElement('a'));
-		this.find('.jsonbox-buttons > a:last-child').css(btnStyle).prop('href','#').html('Delete').on('click',function(e) {
+		this.find('.jsonbox-buttons-holder').append(document.createElement('a'));
+		this.find('.jsonbox-buttons-holder > a:last-child').addClass('jsonbox-button').html('Delete')
+		.on('click',function(e) {
+			// hook for delete click
 			e.preventDefault();
-		 	// hook for delete click
-		 	var placeholderObj = [];
 		 	var itemIndex = $(this).parent().parent().find('select').val();
 		 	delete obj[itemIndex];
-		 	obj = $.grep(obj,function(n) { return(n);});
 		 	obj.sort(compare);
 
-		 	// fill the object in proper location of main object
-		 	// first create a free placeholder to save the correct path
-		 	//data[filterArray[0]][fieldName] = obj;
-		 	// now extend two objects
+		 	// update the targeted element with edited json
 		 	updateListBox($(this).parent().parent(),obj,fieldName);
 
 
@@ -139,16 +112,17 @@ $(function() {
 			
 
 			$.each(_elm ,function(key,val) {
-				if (typeof(val) !== 'string')
+				if (typeof(val) === 'object')
 					val = key; 
-				box.append(document.createElement('option')).find('option:last-child').val(key).html(val);
+				_box.append(document.createElement('option')).find('option:last-child').val(key).html(val);
 			});
 
 			// update target
-			$(settings.target).text(JSON.stringify(obj));
+			$(settings.target).text(JSON.stringify(data));
 		}
 
 		return this;
 	};
 
 }(jQuery));
+
