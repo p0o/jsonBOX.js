@@ -1,9 +1,42 @@
-/* This CSS file is under development
-   You can use it to style anything in Jsonbox as you need. If you are using a CSS framework like Bootstrap
-   you wont need to change anything here, most of the function of this css is about formatting the layout n-
-   ot styling it.
-   
-     
-     Developed with love by Pooria Attarzadeh follow me on twitter: @p0zart
+/* 
+jsonBOX CSS - a simple jQuery plugin to create user friendly json editors
+=====================================================================================
+You can use it to style anything in Jsonbox as you need. If you are using a CSS 
+framework like Bootstrap you wont need to change anything here, most of the functions 
+of this css is about formatting the layout not styling it.
+=====================================================================================
+Developed with love by Pooria Attarzadeh follow me on twitter: @p0zart
 */
+.jsonbox-holder {
+	width:240px;
+}
+.jsonbox {
+	width:200px;
+}
+.jsonbox-buttons-holder {
+
+}
+
+.jsonbox-button {
+  display: inline-block;
+  width: auto;
+  text-align: center;
+  padding: 5px;
+  border-bottom-right-radius: 4px;
+  border-bottom-left-radius: 4px;
+  background: #eee;
+  font-size: 11px;
+  cursor:pointer
+}
+
+.jsonbox-popup {
+  position: absolute;
+  width: 40%;
+  top: 25%;
+  left: 30%;
+  height: 150px;
+  background: #fff;
+  border: 2px solid;
+  border-radius: 5px
+}
 
